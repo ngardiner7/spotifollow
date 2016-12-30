@@ -16,6 +16,7 @@ def getInitialUserPlaylists(user_id, access_token, token_type):
     r = requests.get(endpoint, params=params, headers=token)
     return json.loads(r.content)
 
+#THIS PROBABLY DOESN'T WORK, NO TOKEN PASSED
 def getNextUserPlaylists(next_request):
     r = requests.get(next_request)
     return json.loads(r.content)
@@ -55,7 +56,6 @@ def createNewPlaylist(user_id, access_token, token_type, playlist_name):
         'Authorization' : token_type + ' ' + access_token,
         'Content-Type' : 'application/json'
     }
-    # body1 = '{name:' + playlist_name + '}'
     body = {
         'name' : playlist_name,
         'public' : 'true'
@@ -68,7 +68,7 @@ def createNewPlaylist(user_id, access_token, token_type, playlist_name):
 
 #these names are misleading
 def getPlaylistId(user_id, access_token, token_type):
-    playlist_name = 'Testing Spotify API2'
+    playlist_name = 'Testing Spotify API3'
     playlist_id = playlistExists(user_id, access_token, token_type, playlist_name)
 
     if(playlist_id != None):
