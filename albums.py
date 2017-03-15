@@ -1,31 +1,16 @@
 import requests
 import json
 from artists import getArtistIds
-
-def getIntitialArtistAlbums(artist_id):
-    params = {
-        'album_type' : 'album,single,compilation',
-        'market' : 'US',
-        'limit' : '50',
-    }
-
-    endpoint = 'https://api.spotify.com/v1/artists/' + artist_id + '/albums'
-    r = requests.get(endpoint, params=params)
-    return json.loads(r.content)
-
-def getNextArtistAlbums(next_request):
-    r = requests.get(next_request)
-    return json.loads(r.content)
+import client
 
 def getArtistAlbums(next_request, artist_id):
     if(next_request == ''):
-        return getIntitialArtistAlbums(artist_id)
+        return client.getIntitialArtistAlbums(artist_id)
     else:
-        return getNextArtistAlbums(next_request)
+        return client.getNextArtistAlbums(next_request)
 
-def getAlbumIds(access_token, token_type):
+def getAlbumIds(artist_ids):
     album_ids = []
-    artist_ids = getArtistIds(access_token, token_type)
     for x in range(0, len(artist_ids)):
         next_request = ''
 
