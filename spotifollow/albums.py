@@ -1,4 +1,4 @@
-import client
+from spotifollow.spotify import client
 
 
 def getArtistAlbums(next_request, artist_id):

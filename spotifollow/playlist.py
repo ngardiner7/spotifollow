@@ -1,4 +1,5 @@
-import client
+from spotifollow.spotify import client
+
 
 def getUserPlaylists(next_request, user_id):
     if(next_request == ''):

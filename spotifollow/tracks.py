@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from time import mktime, strptime
 
-from spotifollow import client
+from spotifollow.spotify import client
 
 
 def getDate(unstruct_time):
