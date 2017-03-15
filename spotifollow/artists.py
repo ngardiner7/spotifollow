@@ -1,6 +1,3 @@
-import requests
-from  more_itertools import unique_everseen
-import json
 import client
 
 ##Does doing something like the recursively make sense?

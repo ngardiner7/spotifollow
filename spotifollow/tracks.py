@@ -1,9 +1,8 @@
-import requests
-import json
-from time import mktime, strptime
 from datetime import datetime, timedelta
-from albums import getAlbumIds
-import client
+from time import mktime, strptime
+
+from spotifollow import client
+
 
 def getDate(unstruct_time):
     struct_date = strptime(unstruct_time, "%Y-%m-%d")

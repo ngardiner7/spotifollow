@@ -1,6 +1,3 @@
-import user
-import json
-import requests
 import client
 
 def getUserPlaylists(next_request, user_id):

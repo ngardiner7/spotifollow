@@ -1,7 +1,5 @@
-import requests
-import json
-from artists import getArtistIds
 import client
+
 
 def getArtistAlbums(next_request, artist_id):
     if(next_request == ''):
