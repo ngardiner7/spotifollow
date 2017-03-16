@@ -1,22 +1,6 @@
 from spotifollow.spotify import client
 
 
-#   Does doing something like the recursively make sense?
-#   I feel like there's gotta be a better way to handle these request limit than I am currently?
-def get_user_followed_artist_ids():
-    artist_ids = []
-    after_id = ''
-
-    while after_id is not None:
-        artist_data = client.getUserFollowedArtists(after_id)
-        num_artists = len(artist_data['artists']['items'])
-        after_id = artist_data['artists']['cursors']['after']
-
-        for x in range(0, num_artists):
-            artist_ids.append(artist_data['artists']['items'][x]['id'])
-    return artist_ids
-
-
 def get_user_followed_artist():
     after_id = ''
     artists = []
@@ -27,11 +11,6 @@ def get_user_followed_artist():
 
     return artists
 
-
-#  Planning to add some more ways to get artist_ids for a user outside of following, hence the function
-def get_artist_ids():
-    artist_ids = get_user_followed_artist_ids()
-    return artist_ids
 
 # def getUserImplicitLikedArtists(next_request, access_token, token_type):
 #     if(next_request == ''):
