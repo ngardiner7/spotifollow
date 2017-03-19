@@ -46,7 +46,10 @@ def getPlaylistIds(user_id, track_uris):
     return playlist_ids
 
 #name change pleaseee
-def addTracks(user_id, track_uris, playlist_ids):
+def add_new_tracks_to_user_playlist(user_id, track_uris, playlist_ids):
+    user_id = client.get_user_id()
+    playlist_ids = get_playlist_ids(user_id)
+
     for playlist_id in playlist_ids:
         max_tracks = 100
         start_index = 0
