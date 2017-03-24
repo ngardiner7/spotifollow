@@ -4,6 +4,7 @@ from spotifollow.spotify import client
 
 def get_track_uris_by_playlist():
     album_ids = ["5fffaeeOmkUPC1dgu3sX7V", "3dbaMkITsRRtXN7YQFt9by", "0nHav4ho0ar4ZVve8H5xZn", "5rMUVMhaXB2obaFi3NCL51", "4aYdJUjG4475xqh4luLeNQ", "6ZJJi8V3NaEHpRV4FD4ZFS"]
+    # Get a 429 for rate limiting issues. Need to auth my requests for better rate limits ideally
     tracks = get_tracks_for_album_ids(album_ids)
     track_uris = get_tracks_dictionary()
     for track in tracks:
