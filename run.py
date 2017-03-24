@@ -22,7 +22,7 @@ def main():
     print album_ids
 
     print "Fetching Tracks"
-    track_uris_by_playlist = tracks.get_track_uris_by_playlist()
+    track_uris_by_playlist = tracks.get_track_uris_by_playlist(album_ids)
     print "track uris:"
     print track_uris_by_playlist
 
