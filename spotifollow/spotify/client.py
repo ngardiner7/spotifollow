@@ -16,12 +16,16 @@ BASE_URLS = {
 URLS = {
     "auth_code": "{0}/authorize".format(BASE_URLS.get("accounts")),
     "auth_token": "{0}/api/token".format(BASE_URLS.get("accounts")),
-    "user": "{0}/me".format(BASE_URLS.get("api")),
-    "user_following": "{0}/me/following".format(BASE_URLS.get("api")),
+    "me": "{0}/me".format(BASE_URLS.get("api")),
+    "following": "{0}/me/following".format(BASE_URLS.get("api")),
     "artists": "{0}/artists".format(BASE_URLS.get("api")),
-    "albums": "{0}/albums".format(BASE_URLS.get("api"))
+    "album": "{0}/albums".format(BASE_URLS.get("api")),
+    "albums": "{0}/albums/?ids=".format(BASE_URLS.get("api")),
+    "users": "{0}/users".format(BASE_URLS.get("api")),
+    "top": "{0}/me/top".format(BASE_URLS.get("api"))
 }
 
+##Auth
 def getNewAccessToken():
     body = {
         'grant_type' : 'refresh_token',
@@ -35,7 +39,6 @@ def getNewAccessToken():
 
 ACCESS_TOKEN = getNewAccessToken()
 
-##Auth
 def getAuthCode():
     params = {
         'client_id' : CLIENT_ID,
@@ -61,24 +64,134 @@ def get_user_id():
     token = {
         'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
     }
-    url = "{0}".format(URL.get("user"))
-    r = requests.get('https://api.spotify.com/v1/me', headers=token)
+    url = "{0}".format(URLS.get("me"))
+    r = requests.get(url, headers=token)
     return json.loads(r.content)['id']
 
 ##artists https://developer.spotify.com/web-api/get-followed-artists/
-def getUserFollowedArtists(after_id):
+def get_user_followed_artists(after_id):
     params = {
         'type': 'artist',
         'limit': '50',
     }
     if after_id != '':
         params['after'] = after_id
+
     token = {
         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
     }
-    url = "{0}".format(URLS.get("user_following"))
+    url = "{0}".format(URLS.get("following"))
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
+
+# def get_user_top_artists():
+#     params = {
+#         'type': 'artist',
+#         'limit': '50',
+#     }
+#
+#     token = {
+#         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
+#     }
+#     url = "{0}/{1}".format(URLS.get("top"), "tracks")
+#     r = requests.get(url, params=params, headers=token)
+#     return json.loads(r.content)
+
+#   albums https://developer.spotify.com/web-api/get-several-artists/
+def get_albums_for_artist(artist_id, offset, page_size):
+    token = {
+        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+    params = {
+        'album_type': 'album,single,compilation',
+        'market': 'US',
+        'limit': page_size,
+        'offset': offset
+    }
+    url = "{0}/{1}/albums".format(URLS.get("artists"), artist_id)
+    r = requests.get(url, params=params, headers=token)
+    return json.loads(r.content)
+
+##tracks
+def get_album(album_id):
+    token = {
+        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+    url = "{0}/{1}".format(URLS.get("album"), album_id)
+    r = requests.get(url, headers=token)
+    return json.loads(r.content)
+
+def get_albums(album_ids):
+    token = {
+        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+    url = "{0}{1}".format(URLS.get("albums"), album_ids)
+    r = requests.get(url, headers=token)
+    return json.loads(r.content)
+
+#   playlists
+def get_playlists_for_user(user_id, offset, page_size):
+    params = {
+        'limit': page_size,
+        'offset': offset
+    }
+
+    token = {
+        'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+
+    url = "{0}/{1}/{2}".format(URLS.get("users"), user_id, "playlists")
+    r = requests.get(url, params=params, headers=token)
+    return json.loads(r.content)
+
+def create_playlist(user_id, playlist_name):
+    token = {
+        'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN,
+        'Content-Type': 'application/json'
+    }
+    body = {
+        'name': playlist_name,
+        'public': 'true'
+    }
+
+    url = "{0}/{1}/{2}".format(URLS.get("users"), user_id, "playlists")
+    r = requests.post(url, headers=token, data=json.dumps(body))
+
+    playlist_data = json.loads(r.content)
+    return playlist_data["id"]
+
+def add_tracks_to_playlist(user_id, uris, playlist_id):
+    token = {
+        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN,
+        'Content-Type' : 'application/json'
+    }
+
+    body = {
+        'uris' : uris,
+    }
+
+    url = "{0}/{1}/{2}/{3}/{4}".format(URLS.get("users"), user_id, "playlists", playlist_id, "tracks")
+    r = requests.post(url, data=json.dumps(body), headers=token)
+    return
+
+
+# TESTING
+# TESTING
+
+
+# def user_top_tracks():
+#     token = {
+#         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
+#     }
+#     params = {
+#         "limit": 50,
+#         "time_range": "medium_term"
+#     }
+#     url = "https://api.spotify.com/v1/me/top/artists"
+#     r = requests.get(url, params=params, headers=token)
+#     print r.content
+#     return json.loads(r.content)
+
 
 # def getInitialUserLikedArtists(access_token, token_type):
 #     params = {
@@ -100,97 +213,4 @@ def getUserFollowedArtists(after_id):
 #     }
 #
 #     r = requests.get(next_request, headers=token)
-#     return json.loads(r.content)
-
-
-#   albums https://developer.spotify.com/web-api/get-several-artists/
-def get_albums_for_artist(artist_id, offset, page_size):
-    token = {
-        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
-    }
-    params = {
-        'album_type': 'album,single,compilation',
-        'market': 'US',
-        'limit': page_size,
-        'offset': offset
-    }
-    url = "{0}/{1}/albums".format(URLS.get("artists"), artist_id)
-    r = requests.get(url, params=params, headers=token)
-    return json.loads(r.content)
-
-
-##tracks
-def get_album(album_id):
-    token = {
-        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
-    }
-    url = "{0}/{1}".format(URLS.get("albums"), album_id)
-    r = requests.get(url, headers=token)
-    return json.loads(r.content)
-
-
-#   playlists
-def getInitialUserPlaylists(user_id):
-    params = {
-        'limit': '50',
-    }
-
-    token = {
-        'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
-    }
-
-    endpoint = 'https://api.spotify.com/v1/users/' + user_id + '/playlists'
-    r = requests.get(endpoint, params=params, headers=token)
-    return json.loads(r.content)
-
-
-def getNextUserPlaylists(next_request):
-    r = requests.get(next_request)
-    return json.loads(r.content)
-
-
-def createNewPlaylist(user_id, playlist_name):
-    token = {
-        'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN,
-        'Content-Type': 'application/json'
-    }
-    body = {
-        'name': playlist_name,
-        'public': 'true'
-    }
-    endpoint = 'https://api.spotify.com/v1/users/' + user_id + '/playlists'
-    r = requests.post(endpoint, data=json.dumps(body), headers=token)
-
-    playlist_data = json.loads(r.content)
-    return playlist_data["id"]
-
-def addTracksToPlaylist(user_id, uris, playlist_id):
-    token = {
-        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN,
-        'Content-Type' : 'application/json'
-    }
-
-    body = {
-        'uris' : uris,
-    }
-
-    endpoint = 'https://api.spotify.com/v1/users/' + user_id + '/playlists/' + playlist_id + '/tracks'
-    r = requests.post(endpoint, data=json.dumps(body), headers=token)
-
-
-# TESTING
-# TESTING
-
-
-# def user_top_tracks():
-#     token = {
-#         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
-#     }
-#     params = {
-#         "limit": 50,
-#         "time_range": "medium_term"
-#     }
-#     url = "https://api.spotify.com/v1/me/top/artists"
-#     r = requests.get(url, params=params, headers=token)
-#     print r.content
 #     return json.loads(r.content)
