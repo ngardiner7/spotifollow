@@ -5,12 +5,11 @@ def get_user_followed_artist():
     after_id = ''
     artists = []
     while after_id is not None:
-        artist_data = client.getUserFollowedArtists(after_id)
+        artist_data = client.get_user_followed_artists(after_id)
         artists.extend(artist_data['artists']['items'])
         after_id = artist_data['artists']['cursors']['after']
 
     return artists
-
 
 # def getUserImplicitLikedArtists(next_request, access_token, token_type):
 #     if(next_request == ''):
