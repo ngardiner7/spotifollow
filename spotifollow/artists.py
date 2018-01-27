@@ -1,5 +1,8 @@
 from spotifollow.spotify import client
 
+def get_artists():
+    artist_ids = get_user_followed_artist() + get_top_artists()
+    return dedupe(artist_ids)
 
 def get_user_followed_artist():
     after_id = ''
@@ -9,7 +12,23 @@ def get_user_followed_artist():
         artists.extend(artist_data['artists']['items'])
         after_id = artist_data['artists']['cursors']['after']
 
-    return artists
+    return [artist['id'] for artist in artists]
+
+def get_top_artists():
+    artist_ids = []
+    ranges = ['short_term', 'medium_term','long_term']
+    for time_range in ranges:
+        artist_data = client.get_user_top_artists(time_range)
+        for artist in artist_data.get("items"):
+            artist_ids.append(artist.get("id"))
+
+    return artist_ids
+
+def dedupe(seq):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in seq if not (x in seen or seen_add(x))]
+
 
 # def getUserImplicitLikedArtists(next_request, access_token, token_type):
 #     if(next_request == ''):

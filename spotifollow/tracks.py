@@ -3,7 +3,7 @@ from time import mktime, strptime
 from spotifollow.spotify import client
 
 BATCH_SIZE = 20
-ALBUM_DATE_ELIGIBILITY = 30
+ALBUM_DATE_ELIGIBILITY = 7
 
 
 def get_track_uris_by_playlist(album_ids):
@@ -70,11 +70,11 @@ def format_string_timestamp_to_date(unstruct_time):
 def get_tracks_dictionary():
     tracks_dict = {
         "new_songs": {
-            "playlist_name": "Spotifollow - New Songs",
+            "playlist_name": "Spotifollow - New Songs - 3",
             "uris": []
         },
         'remix' : {
-            "playlist_name" : "Spotifollow - Remixes",
+            "playlist_name" : "Spotifollow - Remixes - 3",
             "uris" : []
         }
     }

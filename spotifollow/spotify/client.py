@@ -1,6 +1,9 @@
 import requests
 import json
 
+# SANIKA_AUTHORIZATION = 'AQBAyBgO9VHBKUc4ArnqAFnmjdP7PTCEnlwMMI30uKqHVjXqk4cW6pWRuenmya4Du1PKF9-DUqmTmD-hBPXnBnIKF3znVcWeGOIwZ7Han3x7dCA_Ux2a4T66V9CONGl8gYPzopwt6cfvnze0wdxn-t7I3YKKqpgppKUrVIGrQyXvGtlASbutjA9Jph5C1sKDQXV-Hr-laL5yEoY3UWhGI2XoZjP6LQQiT4pkBq7ndQWSWogaPOMswBLpFBShATbXX8NxCTF8r4wqSExhSyEZSQVaOnjAKOnXD6y115Wi-mWEGa2TK8z_ywdnYD7BcPweB26tog'
+# SANIKA_REFRESH_TOKEN = 'AQBXKGXs-A9RK6MHjdeAGdqwT-KhKex3ZEG8Z0HWITFwDoKaISpUhPvrGLHLDpRXpy7hDQMFXu6X8M9m7POBs18tOvOVDfw-Te2Nk4AiBnNYR7ZiPYnyTMlaaVF1HUvjHNA'
+
 CLIENT_SECRET = ''
 CLIENT_ID = ''
 REDIRECT_URI = 'https://seatgeek.com'
@@ -25,7 +28,7 @@ URLS = {
     "top": "{0}/me/top".format(BASE_URLS.get("api"))
 }
 
-##Auth
+#Auth
 def getNewAccessToken():
     body = {
         'grant_type' : 'refresh_token',
@@ -44,10 +47,11 @@ def getAuthCode():
         'client_id' : CLIENT_ID,
         'response_type' : 'code',
         'redirect_uri' : REDIRECT_URI,
-        'scope': 'playlist-modify-private user-follow-read user-follow-modify playlist-modify-public user-library-read'
+        'scope': 'playlist-modify-private user-follow-read user-follow-modify playlist-modify-public user-library-read user-top-read'
     }
     url = "{0}".format(URLS.get("auth_code"))
     r = requests.get(url, params=params)
+    return json.loads(r.content)
 
 def getInitialAccessToken():
     body = {
@@ -57,6 +61,7 @@ def getInitialAccessToken():
     }
     url = "{0}".format(URLS.get("auth_token"))
     r = requests.post(url, auth=(CLIENT_ID, CLIENT_SECRET), data=body)
+    print json.loads(r.content)
     return json.loads(r.content)
 
 ##user
@@ -84,18 +89,18 @@ def get_user_followed_artists(after_id):
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
 
-# def get_user_top_artists():
-#     params = {
-#         'type': 'artist',
-#         'limit': '50',
-#     }
-#
-#     token = {
-#         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
-#     }
-#     url = "{0}/{1}".format(URLS.get("top"), "tracks")
-#     r = requests.get(url, params=params, headers=token)
-#     return json.loads(r.content)
+def get_user_top_artists(time_range):
+    params = {
+        'time_range': time_range,
+        'limit': '50',
+    }
+
+    token = {
+        'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+    url = "{0}/{1}".format(URLS.get("top"), "artists")
+    r = requests.get(url, params=params, headers=token)
+    return json.loads(r.content)
 
 #   albums https://developer.spotify.com/web-api/get-several-artists/
 def get_albums_for_artist(artist_id, offset, page_size):
