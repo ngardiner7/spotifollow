@@ -4,13 +4,13 @@ for a single user with hard coded spotify user creds
 """
 from spotifollow import albums
 from spotifollow import artists
+from spotifollow import top_artists
 from spotifollow import tracks
 from spotifollow import playlist
 from spotifollow.spotify import client
 
 def main():
-    people = artists.get_user_followed_artist()
-    artist_ids = [artist["id"] for artist in people]
+    artist_ids = artists.get_artists()
     print "Fetching artists:"
     print artist_ids
 
@@ -29,6 +29,11 @@ def main():
     playlist.add_tracks_to_playlists(track_uris_by_playlist)
 
 main()
+
+# def testing():
+#     x = top_artists.get_top_artists()
+#
+# testing()
 
 
 
