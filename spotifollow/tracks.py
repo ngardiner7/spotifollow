@@ -70,11 +70,11 @@ def format_string_timestamp_to_date(unstruct_time):
 def get_tracks_dictionary():
     tracks_dict = {
         "new_songs": {
-            "playlist_name": "Spotifollow - New Songs - 3",
+            "playlist_name": "Spotifollow - New Songs - 4",
             "uris": []
         },
         'remix' : {
-            "playlist_name" : "Spotifollow - Remixes - 3",
+            "playlist_name" : "Spotifollow - Remixes - 4",
             "uris" : []
         }
     }

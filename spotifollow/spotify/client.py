@@ -20,6 +20,7 @@ URLS = {
     "auth_code": "{0}/authorize".format(BASE_URLS.get("accounts")),
     "auth_token": "{0}/api/token".format(BASE_URLS.get("accounts")),
     "me": "{0}/me".format(BASE_URLS.get("api")),
+    "library": "{0}/me/tracks".format(BASE_URLS.get("api")),
     "following": "{0}/me/following".format(BASE_URLS.get("api")),
     "artists": "{0}/artists".format(BASE_URLS.get("api")),
     "album": "{0}/albums".format(BASE_URLS.get("api")),
@@ -99,6 +100,20 @@ def get_user_top_artists(time_range):
         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
     }
     url = "{0}/{1}".format(URLS.get("top"), "artists")
+    r = requests.get(url, params=params, headers=token)
+    return json.loads(r.content)
+
+def get_user_saved_tracks(offset, page_size):
+    params = {
+        'limit' : page_size,
+        'offset' : offset
+    }
+
+    token = {
+        'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
+    }
+
+    url = "{0}".format(URLS.get("library"))
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
 
@@ -182,21 +197,6 @@ def add_tracks_to_playlist(user_id, uris, playlist_id):
 
 # TESTING
 # TESTING
-
-
-# def user_top_tracks():
-#     token = {
-#         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN
-#     }
-#     params = {
-#         "limit": 50,
-#         "time_range": "medium_term"
-#     }
-#     url = "https://api.spotify.com/v1/me/top/artists"
-#     r = requests.get(url, params=params, headers=token)
-#     print r.content
-#     return json.loads(r.content)
-
 
 # def getInitialUserLikedArtists(access_token, token_type):
 #     params = {
