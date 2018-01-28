@@ -4,10 +4,11 @@ for a single user with hard coded spotify user creds
 """
 from spotifollow import albums
 from spotifollow import artists
-from spotifollow import top_artists
 from spotifollow import tracks
 from spotifollow import playlist
 from spotifollow.spotify import client
+from collections import Counter
+
 
 def main():
     artist_ids = artists.get_artists()
@@ -31,7 +32,7 @@ def main():
 main()
 
 # def testing():
-#     x = top_artists.get_top_artists()
+#     artists.get_artists()
 #
 # testing()
 

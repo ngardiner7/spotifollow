@@ -1,7 +1,16 @@
 from spotifollow.spotify import client
+from collections import Counter
+
+
+PAGE_SIZE = 50
+FREQUENCY_MIN = 2
 
 def get_artists():
-    artist_ids = get_user_followed_artist() + get_top_artists()
+    # print len(get_user_followed_artist())
+    # print len(get_top_artists())
+    # print len(get_frequent_saved_artists())
+    artist_ids = get_user_followed_artist() + get_top_artists() + get_frequent_saved_artists()
+    # print len(dedupe(artist_ids))
     return dedupe(artist_ids)
 
 def get_user_followed_artist():
@@ -29,6 +38,49 @@ def dedupe(seq):
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]
 
+
+def get_frequent_saved_artists():
+    frequent_artist_ids = []
+    artist_ids = get_user_saved_tracks()
+    artist_id_counts = Counter(artist_ids)
+
+    for artist_id in artist_id_counts:
+        if artist_id_counts.get(artist_id) >= FREQUENCY_MIN:
+            frequent_artist_ids.append(artist_id)
+
+    return frequent_artist_ids
+
+
+def get_user_saved_tracks():
+    artist_ids = []
+    start = 0
+    while True:
+        saved_track_data = client.get_user_saved_tracks(start, PAGE_SIZE)
+        if saved_track_data is not None:
+            for track in saved_track_data.get("items"):
+                # I don't like this naming, it's real annoying because of the double track reference (e.g. "track.get("track")")
+                for artist in track.get("track").get("artists"):
+                    artist_ids.append(artist.get("id"))
+            # Worried that there are scenarios where this could break if #saved_tracks % PAGE_SIZE = 0
+            if len(saved_track_data.get("items")) < PAGE_SIZE:
+                break
+            start += len(saved_track_data.get("items"))
+
+    return artist_ids
+
+def get_albums_for_artist(artist_id):
+    albums = []
+    start = 0
+    while True:
+        album_data = client.get_albums_for_artist(artist_id, start, PAGE_SIZE)
+        # Get a 429 for rate limiting issues. Need to auth my requests for better rate limits ideally
+        if album_data is not None:
+            albums.extend(album_data.get("items"))
+            if len(album_data.get("items")) < PAGE_SIZE:
+                break
+            start += len(album_data.get("items"))
+
+    return albums
 
 # def getUserImplicitLikedArtists(next_request, access_token, token_type):
 #     if(next_request == ''):
@@ -62,7 +114,6 @@ def dedupe(seq):
 #             frequent_user_liked_artists_ids.append(artist_id)
 #
 #     return frequent_user_liked_artists_ids
-#
 #
 # def getArtistIds(access_token, token_type):
 #     all_artist_ids = getUserLikedArtistsIds(access_token, token_type) + getUserImplicitLikedArtistsIds(access_token, token_type)
