@@ -11,15 +11,14 @@ from collections import Counter
 
 
 def main():
-    artist_ids = artists.get_artists()
     print "Fetching artists:"
-    print artist_ids
+    artist_ids = artists.get_artists()
+    print len(artist_ids)
 
     print "Fetching Albums"
     artist_albums = albums.get_albums_for_artist_ids(artist_ids)
     album_ids = [album["id"] for album in artist_albums]
     print "album ids:"
-    print album_ids
 
     print "Fetching Tracks"
     track_uris_by_playlist = tracks.get_track_uris_by_playlist(album_ids)
@@ -30,13 +29,6 @@ def main():
     playlist.add_tracks_to_playlists(track_uris_by_playlist)
 
 main()
-
-# def testing():
-#     artists.get_artists()
-#
-# testing()
-
-
 
 #FOR TESTING
     # track_uris_by_playlist = {

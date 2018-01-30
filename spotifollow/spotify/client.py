@@ -1,9 +1,6 @@
 import requests
 import json
 
-# SANIKA_AUTHORIZATION = 'AQBAyBgO9VHBKUc4ArnqAFnmjdP7PTCEnlwMMI30uKqHVjXqk4cW6pWRuenmya4Du1PKF9-DUqmTmD-hBPXnBnIKF3znVcWeGOIwZ7Han3x7dCA_Ux2a4T66V9CONGl8gYPzopwt6cfvnze0wdxn-t7I3YKKqpgppKUrVIGrQyXvGtlASbutjA9Jph5C1sKDQXV-Hr-laL5yEoY3UWhGI2XoZjP6LQQiT4pkBq7ndQWSWogaPOMswBLpFBShATbXX8NxCTF8r4wqSExhSyEZSQVaOnjAKOnXD6y115Wi-mWEGa2TK8z_ywdnYD7BcPweB26tog'
-# SANIKA_REFRESH_TOKEN = 'AQBXKGXs-A9RK6MHjdeAGdqwT-KhKex3ZEG8Z0HWITFwDoKaISpUhPvrGLHLDpRXpy7hDQMFXu6X8M9m7POBs18tOvOVDfw-Te2Nk4AiBnNYR7ZiPYnyTMlaaVF1HUvjHNA'
-
 CLIENT_SECRET = ''
 CLIENT_ID = ''
 REDIRECT_URI = 'https://seatgeek.com'
@@ -29,7 +26,7 @@ URLS = {
     "top": "{0}/me/top".format(BASE_URLS.get("api"))
 }
 
-#Auth
+
 def getNewAccessToken():
     body = {
         'grant_type' : 'refresh_token',
@@ -41,7 +38,9 @@ def getNewAccessToken():
     access_token_json = json.loads(r.content)
     return access_token_json['access_token']
 
+
 ACCESS_TOKEN = getNewAccessToken()
+
 
 def getAuthCode():
     params = {
@@ -53,6 +52,7 @@ def getAuthCode():
     url = "{0}".format(URLS.get("auth_code"))
     r = requests.get(url, params=params)
     return json.loads(r.content)
+
 
 def getInitialAccessToken():
     body = {
@@ -90,6 +90,7 @@ def get_user_followed_artists(after_id):
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
 
+
 def get_user_top_artists(time_range):
     params = {
         'time_range': time_range,
@@ -102,6 +103,7 @@ def get_user_top_artists(time_range):
     url = "{0}/{1}".format(URLS.get("top"), "artists")
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
+
 
 def get_user_saved_tracks(offset, page_size):
     params = {
@@ -116,6 +118,7 @@ def get_user_saved_tracks(offset, page_size):
     url = "{0}".format(URLS.get("library"))
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
+
 
 #   albums https://developer.spotify.com/web-api/get-several-artists/
 def get_albums_for_artist(artist_id, offset, page_size):
@@ -132,6 +135,7 @@ def get_albums_for_artist(artist_id, offset, page_size):
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
 
+
 ##tracks
 def get_album(album_id):
     token = {
@@ -140,6 +144,7 @@ def get_album(album_id):
     url = "{0}/{1}".format(URLS.get("album"), album_id)
     r = requests.get(url, headers=token)
     return json.loads(r.content)
+
 
 def get_albums(album_ids):
     token = {
@@ -164,6 +169,7 @@ def get_playlists_for_user(user_id, offset, page_size):
     r = requests.get(url, params=params, headers=token)
     return json.loads(r.content)
 
+
 def create_playlist(user_id, playlist_name):
     token = {
         'Authorization': TOKEN_TYPE + ' ' + ACCESS_TOKEN,
@@ -180,6 +186,7 @@ def create_playlist(user_id, playlist_name):
     playlist_data = json.loads(r.content)
     return playlist_data["id"]
 
+
 def add_tracks_to_playlist(user_id, uris, playlist_id):
     token = {
         'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN,
@@ -193,29 +200,3 @@ def add_tracks_to_playlist(user_id, uris, playlist_id):
     url = "{0}/{1}/{2}/{3}/{4}".format(URLS.get("users"), user_id, "playlists", playlist_id, "tracks")
     r = requests.post(url, data=json.dumps(body), headers=token)
     return
-
-
-# TESTING
-# TESTING
-
-# def getInitialUserLikedArtists(access_token, token_type):
-#     params = {
-#         'limit' : '50',
-#     }
-#
-#     token = {
-#         'Authorization' : token_type + ' ' + access_token
-#     }
-#
-#     endpoint = 'https://api.spotify.com/v1/me/tracks'
-#     r = requests.get(endpoint, params=params, headers=token)
-#     return json.loads(r.content)
-#
-#
-# def getNextUserLikedArtists(next_request, access_token, token_type):
-#     token = {
-#         'Authorization' : TOKEN_TYPE + ' ' + ACCESS_TOKEN
-#     }
-#
-#     r = requests.get(next_request, headers=token)
-#     return json.loads(r.content)

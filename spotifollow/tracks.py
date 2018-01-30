@@ -7,7 +7,6 @@ ALBUM_DATE_ELIGIBILITY = 7
 
 
 def get_track_uris_by_playlist(album_ids):
-    # Getting a 429 for rate limiting issues. Need to auth my requests for better rate limits ideally
     track_uris = get_tracks_for_album_ids(album_ids)
     struct_track_uris = get_tracks_dictionary()
     for track in track_uris:
@@ -19,7 +18,6 @@ def get_track_uris_by_playlist(album_ids):
     return struct_track_uris
 
 
-#Add handling for remixes again
 def get_tracks_for_album_ids(album_ids):
     tracks = []
     album_ids_batches = batch_album_ids(album_ids)
